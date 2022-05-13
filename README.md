@@ -4,7 +4,7 @@
   <p>A a webpage that allows you to search for stock information.</p>
   <a href="https://github.com/Vivian-Cheng/Stock-Search">Explore the docs >></a>
   <br/>
-  ![](https://github.com/Vivian-Cheng/Stock-Search/cover.gif)
+  ![](https://github.com/Vivian-Cheng/Stock-Search/blob/main/image/cover.gif)
 </div>
 
 #### Table of Contents
