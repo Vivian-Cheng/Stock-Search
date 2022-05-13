@@ -1,6 +1,6 @@
 var https = require('https');
 const { resolve } = require('path');
-const token = "c844d4qad3ide9hefb20";
+const token = "{API_KEY}";
 
 function requester(url) {
   return new Promise((resolve) => {
