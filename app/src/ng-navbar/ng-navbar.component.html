@@ -1,0 +1,28 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-theme mb-3">
+  <div class="container-fluid">
+    <a class="navbar-brand" [routerLink]="'.'">Stock Search</a>
+    <!--navbar toggler-->
+    <button class="navbar-toggler" type="button" data-bs-toggle="button" (click)="isMenuCollapsed = !isMenuCollapsed">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- navbar menu -->
+    <div class="collapse navbar-collapse" [(ngbCollapse)]="isMenuCollapsed">
+      <ul ngbNav class="navbar-nav nav-justify ms-auto text-end">
+        <li ngbNavItem="Search" class="nav-item">
+          <a ngbNavLink class="nav-link px-3 my-1 py-1" routerLink={{searchLink}}
+            [class.active]="curr == searchLink && searchLink != '/search/home'"
+            (click)="isMenuCollapsed = true">Search</a>
+        </li>
+        <li ngbNavItem="Watchlist" class="nav-item">
+          <a ngbNavLink class="nav-link px-3 my-1 py-1" routerLink="watchlist" routerLinkActive="active"
+            (click)="isMenuCollapsed = true">Watchlist</a>
+        </li>
+        <li ngbNavItem="Portfolio" class="nav-item">
+          <a ngbNavLink class="nav-link px-3 my-1 py-1" routerLink="portfolio" routerLinkActive="active"
+            (click)="isMenuCollapsed = true">Portfolio</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

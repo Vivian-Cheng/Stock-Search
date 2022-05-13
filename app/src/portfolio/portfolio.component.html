@@ -1,0 +1,114 @@
+<ngb-alert #transAlert *ngIf="transAlertMsg" [type]="transAlertMsg.includes('bought') ? 'success' : 'danger'"
+  class="alert alert-success alert-dismissible text-center" role="alert" (closed)="transAlertMsg = ''">
+  {{transAlertMsg}} successfully.
+</ngb-alert>
+<div class="container-sm mx-auto px-5 pb-5">
+  <p class="h3 title">My Portfolio</p>
+  <p class="h5"> Money in Wallet: ${{wallet | number: '1.2-2'}}</p>
+  <!--Empty portfolio warning-->
+  <div *ngIf="isEmpty" class="alert alert-warning text-dark text-center" role="alert">
+    Currently you don't have any stock.
+  </div>
+
+  <div>
+    <!--Hold stock card-->
+    <div class="my-3" *ngFor="let item of portfoList">
+      <div class="card w-100">
+        <div class="card-header d-inline-flex align-items-baseline p-0">
+          <a class="btn w-100 d-inline-flex align-items-baseline no-border m-1"
+            [routerLink]="['/search',item.content.ticker]">
+            <p class="h4 my-0 me-2">{{item.symbol}}</p>
+            <p class="h6 my-0 text-secondary">{{item.content.name}}</p>
+          </a>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="d-flex justify-content-between">
+                <p>Quantity:</p>
+                <p>{{item.content.quantity | number: '1.2-2'}}</p>
+              </div>
+              <div class="d-flex justify-content-between">
+                <p>Avg. Cost/Share:</p>
+                <p>{{item.content.total/item.content.quantity | number:'1.2-2'}}</p>
+              </div>
+              <div class="d-flex justify-content-between">
+                <p> Total Cost:</p>
+                <p>{{item.content.total | number:'1.2-2'}}</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex justify-content-between">
+                <p>Change:</p>
+                <div class="d-inline-flex align-items-baseline">
+                  <ng-container
+                    *ngIf="stockPriceMap.get(item.content.ticker) - calAvg(item.content.total,item.content.quantity) > 0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#53A451"
+                      class="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                      <path
+                        d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
+                    </svg>
+                  </ng-container>
+                  <ng-container
+                    *ngIf="stockPriceMap.get(item.content.ticker) - calAvg(item.content.total,item.content.quantity) < 0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#E9392B"
+                      class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                      <path
+                        d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                    </svg>
+                  </ng-container>
+                  <p
+                    [ngClass]="stockPriceMap.get(item.content.ticker) - calAvg(item.content.total,item.content.quantity) == 0 ? 'text-dark' : (stockPriceMap.get(item.content.ticker) - calAvg(item.content.total,item.content.quantity) > 0 ? 'text-green' : 'text-red')">
+                    {{stockPriceMap.get(item.content.ticker) - calAvg(item.content.total,item.content.quantity) |
+                    number:'1.2-2'}}
+                  </p>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between">
+                <p>Current Price:</p>
+                <p
+                  [ngClass]="stockPriceMap.get(item.content.ticker) - calAvg(item.content.total,item.content.quantity) == 0 ? 'text-dark' : (stockPriceMap.get(item.content.ticker) - calAvg(item.content.total,item.content.quantity) > 0 ? 'text-green' : 'text-red')">
+                  {{stockPriceMap.get(item.content.ticker) | number:'1.2-2'}}</p>
+              </div>
+              <div class="d-flex justify-content-between">
+                <p>Market Value:</p>
+                <p
+                  [ngClass]="stockPriceMap.get(item.content.ticker) - calAvg(item.content.total,item.content.quantity) == 0 ? 'text-dark' : (stockPriceMap.get(item.content.ticker) - calAvg(item.content.total,item.content.quantity) > 0 ? 'text-green' : 'text-red')">
+                  {{stockPriceMap.get(item.content.ticker)*item.content.quantity | number:'1.2-2'}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer d-inline-flex justify-content-end">
+          <button class="btn btn-primary py-1 mx-2" (click)="openModal(content, 'Buy')">Buy</button>
+          <button class="btn btn-danger py-1 mx-2" (click)="openModal(content, 'Sell')">Sell</button>
+          <!--Buy or Sell modal-->
+          <ng-template #content let-modal>
+            <div class="modal-header">
+              <p class="modal-title">{{item.content.ticker}}</p>
+              <button type="button" class="btn-close btn-sm no-border" aria-label="Close"
+                (click)="modal.dismiss('Cross click')"></button>
+            </div>
+            <div class="modal-body">
+              <p>Current Price: {{stockPriceMap.get(item.content.ticker) | number: '1.2-2'}}</p>
+              <p>Money in Wallet: ${{wallet | number: '1.2-2'}}</p>
+              <p>Quantity <input type="number" value=0 min="0" #quantity="ngModel" [(ngModel)]="_quantity" required></p>
+              <mat-error *ngIf="transType == 'Buy' && wallet < stockPriceMap.get(item.content.ticker) * quantity.value">
+                Not enough money in wallet!
+              </mat-error>
+              <mat-error *ngIf="transType == 'Sell' && !isValidInput(item.content.ticker)">
+                You cannot sell the stocks that you don't have!
+              </mat-error>
+            </div>
+            <div class="modal-footer d-inline-flex justify-content-between">
+              <p>Total: {{stockPriceMap.get(item.content.ticker) * quantity.value| number: '1.2-2'}}</p>
+              <button type="button" class="btn btn-success me-2"
+                [disabled]="_quantity <= 0 || !isValidInput(item.content.ticker) || quantity.invalid"
+                (click)="transStock(item.content.ticker, item.content.name)">{{transType}}</button>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

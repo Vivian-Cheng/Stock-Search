@@ -1,0 +1,32 @@
+<div class="container-sm mx-auto py-4">
+  <div class="row">
+    <div class="col-sm-6 my-2">
+      <div class="row">
+        <!--Price infomation-->
+        <div class="ps-5">
+          <p class="ms-5 mb-1"><strong>High Price:</strong> {{compQuote.h | number: '1.2-2'}}</p>
+          <p class="ms-5 mb-1"><strong>Low Price:</strong> {{compQuote.l | number: '1.2-2'}}</p>
+          <p class="ms-5 mb-1"><strong>Open Price:</strong> {{compQuote.o | number: '1.2-2'}}</p>
+          <p class="ms-5 mb-1"><strong>Prev. Close:</strong> {{compQuote.pc | number: '1.2-2'}}</p>
+        </div>
+        <!--About company-->
+        <div class="mt-4 mb-3">
+          <p class="fs-5 fw-bold text-center text-decoration-underline">About the company</p>
+          <div>
+            <p class="mb-2"><strong>IPO Start Date:</strong> {{compDescript.ipo}}</p>
+            <p class="mb-2"><strong>Industry:</strong> {{compDescript.finnhubIndustry}}</p>
+            <p class="mb-2"><strong>Webpage: </strong><a class="text-no-underline" href={{compDescript.weburl}}
+                target="_blank">{{compDescript.weburl}}</a></p>
+            <p class="mb-2"><strong>Company peers:</strong></p>
+            <a class="text-no-underline" *ngFor="let peer of compPeer" [routerLink]="'/search/'+peer">{{peer}}, </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--Hourly Price Variation-->
+    <div class="col-sm-6">
+      <highcharts-chart *ngIf="isHighcharts" [Highcharts]="Highcharts" [options]="chartOptions" [oneToOne]="true"
+        style="min-width: 310px; height: 400px; display: block;"></highcharts-chart>
+    </div>
+  </div>
+</div>

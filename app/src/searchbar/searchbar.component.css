@@ -1,0 +1,22 @@
+.title {
+  color: #313131;
+}
+.search-bar {
+  border: 2px solid #2224A4;
+  width: 320px;
+  max-width: 80%;
+}
+.input-box {
+  width: 240px;
+  max-width: 70%;
+}
+.no-border {
+  border: 0;
+  box-shadow: none;
+}
+.text-symbol {
+  font-size: small;
+}
+.text-descript {
+  font-size: x-small;
+}

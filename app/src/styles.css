@@ -1,0 +1,91 @@
+/* You can add global styles to this file, and also import other style files */
+/* html {
+  margin: 0px;
+  height: 100%;
+  width: 100%;
+} */
+body {
+  /* width: 800px; */
+  margin: 0 auto;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-image: url('./assets/background-graph.jpg');
+  background-size: cover;
+  background-position: center;
+  /* background-repeat: no-repeat; */
+  background-attachment: fixed;
+}
+.bg-img {
+  min-height: 1000px;
+  background-color: rgba(255, 255, 255, 0.85);
+}
+.bg-theme {
+  background-color: #2224A4;
+}
+.color-theme {
+  background-color: #2224A4;
+}
+.bg-green {
+  color: white;
+  background-color: #53A451;
+  box-shadow: #53A451;
+}
+.bg-green:hover {
+  color: white;
+}
+.bg-red {
+  color: white;
+  background-color: #E9392B;
+  box-shadow: #E9392B;
+}
+.bg-red:hover {
+  color: white;
+}
+.bg-gray {
+  color: black;
+  background-color: #DDDDDD;
+}
+.text-green {
+  color: #53A451;
+}
+.text-red {
+  color: #E9392B;
+}
+.text-no-underline {
+  text-decoration: none;
+}
+.no-border {
+  border: 0;
+  box-shadow: none;
+}
+
+.text-lg {
+  font-size: 1.4rem;
+}
+
+.text-md {
+  font-size: 1rem;
+  line-height: 1rem;
+}
+
+.text-sm {
+  font-size: 0.65rem;
+}
+
+.text-normal {
+  font-size: 0.8rem;
+}
+
+@media (min-width: 576px) {
+  .text-lg {
+  font-size: 1.7rem;
+}
+  .text-md {
+    font-size: 1.4rem;
+  }
+  .text-sm {
+    font-size: 0.8rem;
+  }
+  .text-normal {
+    font-size: 1rem;
+  }
+}

@@ -1,0 +1,6 @@
+.table > :not(:first-child) {
+    border-top: 0;
+}
+.table-area {
+  width: 445px;
+}

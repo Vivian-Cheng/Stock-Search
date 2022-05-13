@@ -1,0 +1,141 @@
+<!--spinner-->
+<div *ngIf="isLoading" class="container-sm d-flex justify-content-center mx-auto mt-4">
+  <mat-spinner diameter="50"></mat-spinner>
+</div>
+
+<ng-container *ngIf="!isLoading">
+  <div class="container-sm mx-auto mt-4">
+    <!--warning message-->
+    <ngb-alert #watchAlert *ngIf="watchAlertMsg" [type]="watchAlertMsg == 'added to' ? 'success' : 'danger'"
+      class="alert alert-success alert-dismissible text-center" role="alert" (closed)="watchAlertMsg = ''">
+      {{compDescript.ticker}} {{watchAlertMsg}} Watchlist.
+    </ngb-alert>
+    <ngb-alert #transAlert *ngIf="transAlertMsg" [type]="transAlertMsg == 'bought' ? 'success' : 'danger'"
+      class="alert alert-success alert-dismissible text-center" role="alert" (closed)="transAlertMsg = ''">
+      {{compDescript.ticker}} {{transAlertMsg}} successfully.
+    </ngb-alert>
+    <!--Company Description-->
+    <div class="row row-cols-3">
+      <div class="col ps-4">
+        <div class="d-inline-flex">
+          <p class="text-lg mb-0">{{compDescript.ticker}}</p>
+          <ng-container *ngIf="!isWatched">
+            <button class="btn no-border d-flex align-self-start" (click)="clickWatch()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star "
+                viewBox="0 0 16 16">
+                <path
+                  d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
+              </svg>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="isWatched">
+            <button class="btn no-border d-flex align-self-start" (click)="clickWatch()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#F6DA49" class="bi bi-star-fill"
+                viewBox="0 0 16 16">
+                <path
+                  d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+              </svg>
+            </button>
+          </ng-container>
+        </div>
+        <p class="text-md text-secondary mb-2">{{compDescript.name}}</p>
+        <p class="text-sm fw-light">{{compDescript.exchange}}</p>
+        <!--Buy or Sell modal-->
+        <ng-template #content let-modal>
+          <div class="modal-header">
+            <p class="modal-title">{{compDescript.ticker}}</p>
+            <button type="button" class="btn btn-close btn-sm no-border" aria-label="Close"
+              (click)="modal.dismiss('Cross click')"></button>
+          </div>
+          <div class="modal-body">
+            <p>Current Price: {{compQuote.c | number: '1.2-2'}}</p>
+            <p>Money in Wallet: ${{wallet | number: '1.2-2'}}</p>
+            <p>Quantity <input type="number" min="0" #quantity="ngModel" [(ngModel)]="_quantity" required></p>
+            <mat-error *ngIf="transType == 'Buy' && wallet < compQuote.c * quantity.value">
+              Not enough money in wallet!
+            </mat-error>
+            <mat-error *ngIf="transType == 'Sell' && !isValidInput()">
+              You cannot sell the stocks that you don't have!
+            </mat-error>
+          </div>
+          <div class="modal-footer d-inline-flex justify-content-between">
+            <p>Total: {{compQuote.c * quantity.value| number: '1.2-2'}}</p>
+            <button type="button" class="btn btn-success me-2"
+              [disabled]="!isValidInput() || quantity.invalid || _quantity <= 0"
+              (click)="transStock()">{{transType}}</button>
+          </div>
+        </ng-template>
+      </div>
+      <div class="col text-center">
+        <img class="w-50 logo" src={{compDescript.logo}}>
+      </div>
+      <div class="col text-end pe-4">
+        <p class="text-lg mb-0"
+          [ngClass]="compQuote.d == 0 ? 'text-dark' : (compQuote.d > 0 ? 'text-green' : 'text-red')">
+          {{compQuote.c | number: '1.2-2'}}</p>
+        <div class="d-inline-flex justify-content-end align-items-baseline flex-wrap">
+          <ng-container *ngIf="compQuote.d > 0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#53A451"
+              class="bi bi-caret-up-fill me-2" viewBox="0 0 16 16">
+              <path
+                d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
+            </svg>
+          </ng-container>
+          <ng-container *ngIf="compQuote.d < 0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#E9392B" class="bi bi-caret-down-fill"
+              viewBox="0 0 16 16">
+              <path
+                d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+            </svg>
+          </ng-container>
+          <p class="text-md mb-0 me-2"
+            [ngClass]="compQuote.d == 0 ? 'text-dark' : (compQuote.d > 0 ? 'text-green' : 'text-red')">
+            {{compQuote.d | number: '1.2-2'}}
+          <p>
+          <p class="text-md" [ngClass]="compQuote.d == 0 ? 'text-dark' : (compQuote.d > 0 ? 'text-green' : 'text-red')">
+            ({{compQuote.dp | number: '1.2-2'}}%)</p>
+        </div>
+        <p class="fw-light text-sm">{{currTime*1000 | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="text-start ps-4">
+        <button type="button" class="btn btn-success me-2 no-border" (click)="openModal(content, 'Buy')">Buy</button>
+        <ng-container *ngIf="true">
+          <button *ngIf="isBought" type="button" class="btn btn-danger"
+            (click)="openModal(content, 'Sell')">Sell</button>
+        </ng-container>
+      </div>
+    </div>
+    <!--Market open/close message-->
+    <div class="text-center">
+      <ng-container *ngIf="isMarketOpen">
+        <p class="text-sm fw-bold text-green mt-4">Market is Open</p>
+      </ng-container>
+      <ng-container *ngIf="!isMarketOpen">
+        <p class="text-sm fw-bold text-red mt-4">Market Closed on {{compQuote.t*1000 | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+      </ng-container>
+    </div>
+  </div>
+  <!--tab-->
+  <div class="container-sm mx-auto mt-4">
+    <mat-tab-group mat-stretch-tabs animationDuration="0ms">
+      <mat-tab label="Summary">
+        <app-summary [ticker]="ticker" [compDescript]="compDescript" [compCandle]="compCandle" [compQuote]="compQuote"
+          [compPeer]="compPeer">
+        </app-summary>
+      </mat-tab>
+      <mat-tab label="Top News">
+        <app-news [ticker]="ticker"></app-news>
+      </mat-tab>
+      <mat-tab label="Charts">
+        <ng-template matTabContent>
+          <app-charts [ticker]="ticker"></app-charts>
+        </ng-template>
+      </mat-tab>
+      <mat-tab label="Insights">
+        <app-insights [ticker]="ticker" [compName]="compDescript.name"></app-insights>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</ng-container>
