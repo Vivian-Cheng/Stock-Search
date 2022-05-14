@@ -67,5 +67,5 @@
     node app.js
     ```
 ## Contact
-:female-technologist: Vivian Cheng - vivian0422.c@gmail.com
-:file_folder: Project Link: https://github.com/Vivian-Cheng/Stock-Search
+* Vivian Cheng - vivian0422.c@gmail.com
+* Project Link - https://github.com/Vivian-Cheng/Stock-Search
